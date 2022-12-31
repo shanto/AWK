@@ -1,0 +1,3 @@
+[submodule "AHKHID"]
+	path = AHKHID
+	url = https://github.com/jleb/AHKHID.git
