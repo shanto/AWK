@@ -2,11 +2,16 @@
 #SingleInstance, Force
 SendMode, Input
 SetBatchLines, -1
-SetWorkingDir, %A_ScriptDir%
 
-Menu, Tray, Icon, .\Oxygen.ico
+If A_IsCompiled {
+    IconHandle := LoadPicture(A_AhkPath, "Icon1", 1)
+} Else {
+    IconHandle := LoadPicture(Format("{}\fn.ico", A_ScriptDir), "Icon1", 1)
+}
 
-#Include, AHKHID\AHKHID.ahk
+Menu, Tray, Icon, hicon:%IconHandle%, 1, 1
+
+#Include, %A_ScriptDir%\AHKHID\AHKHID.ahk
 
 #UseHook, On
 
@@ -45,7 +50,7 @@ InputMsg(wParam, lParam) {
                 While, True {
                     If (!(z := KeyStack.Pop()))
                         Break
-                    s := Format("{sc{:03x} Up}", b+z)
+                    s := Format("{sc{:03x} up}", b+z)
                     ; OutputDebug, % s
                     SendEvent, % s
                 }
@@ -87,14 +92,17 @@ Bin2Hex(addr,len) {
 }
 
 #MaxThreadsPerHotkey, 3
-sc0ea & F10::Send {Volume_Mute}
-sc0ea & F11::Send {Volume_Down}
-sc0ea & F12::Send {Volume_Up}
-sc0ea & Left::Send, % (GetKeyState("Shift") ? "+{Home}" : "{Home}")
-sc0ea & Right::Send, % (GetKeyState("Shift") ? "+{End}" : "{End}")
-sc0ea & Up::Send, % (GetKeyState("Shift") ? "+{PgUp}" : "{PgUp}")
-sc0ea & Down::Send, % (GetKeyState("Shift") ? "+{PgDn}" : "{PgDn}")
-sc0ea & BackSpace::Send, {Delete}
+
+sc0ea::Send {LCtrl down}{CtrlDown}
+sc0ea up::Send {CtrlUp}{LCtrl up}
+LCtrl & F10::Send {Volume_Mute}
+LCtrl & F11::Send {Volume_Down}
+LCtrl & F12::Send {Volume_Up}
+LCtrl & Left::Send, % (GetKeyState("Shift") ? "+{Home}" : "{Home}")
+LCtrl & Right::Send, % (GetKeyState("Shift") ? "+{End}" : "{End}")
+LCtrl & Up::Send, % (GetKeyState("Shift") ? "+{PgUp}" : "{PgUp}")
+LCtrl & Down::Send, % (GetKeyState("Shift") ? "+{PgDn}" : "{PgDn}")
+LCtrl & BackSpace::Send, {Delete}
 
 sc0f2:: ; ea+e8
 Drive, Eject
